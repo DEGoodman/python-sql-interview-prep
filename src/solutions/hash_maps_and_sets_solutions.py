@@ -1,0 +1,146 @@
+"""
+Solutions to Hash Maps and Sets Exercises
+Try solving exercises/data_structures/hash_maps_and_sets.py first!
+"""
+
+def first_uniq_char(s):
+    """
+    Find the first non-repeating character in a string and return its index.
+    
+    Time: O(n), Space: O(1) - at most 26 characters in English
+    """
+    # Count frequency of each character
+    char_count = {}
+    for char in s:
+        char_count[char] = char_count.get(char, 0) + 1
+    
+    # Find first character with count 1
+    for i, char in enumerate(s):
+        if char_count[char] == 1:
+            return i
+    
+    return -1
+
+def is_anagram(s, t):
+    """
+    Check if two strings are anagrams of each other.
+    
+    Time: O(n), Space: O(1) - at most 26 characters
+    """
+    if len(s) != len(t):
+        return False
+    
+    # Method 1: Sort and compare
+    # return sorted(s) == sorted(t)
+    
+    # Method 2: Count frequencies
+    char_count = {}
+    
+    # Count characters in s
+    for char in s:
+        char_count[char] = char_count.get(char, 0) + 1
+    
+    # Subtract characters in t
+    for char in t:
+        if char not in char_count:
+            return False
+        char_count[char] -= 1
+        if char_count[char] == 0:
+            del char_count[char]
+    
+    return len(char_count) == 0
+
+def top_k_frequent(nums, k):
+    """
+    Return the k most frequent elements from an array.
+    
+    Time: O(n log k), Space: O(n)
+    """
+    from collections import Counter
+    import heapq
+    
+    # Count frequencies
+    count = Counter(nums)
+    
+    # Use heap to find top k
+    # Python's heapq is min-heap, so we use negative frequencies
+    heap = []
+    for num, freq in count.items():
+        heapq.heappush(heap, (-freq, num))
+    
+    # Extract top k elements
+    result = []
+    for _ in range(k):
+        freq, num = heapq.heappop(heap)
+        result.append(num)
+    
+    return result
+
+def intersection(nums1, nums2):
+    """
+    Find the intersection of two arrays (unique elements that appear in both).
+    
+    Time: O(m + n), Space: O(min(m, n))
+    """
+    # Convert to sets and find intersection
+    set1 = set(nums1)
+    set2 = set(nums2)
+    return list(set1 & set2)
+
+def subarray_sum(nums, k):
+    """
+    Count the number of continuous subarrays whose sum equals k.
+    
+    Time: O(n), Space: O(n)
+    """
+    # Use cumulative sum and hash map
+    count = 0
+    cumsum = 0
+    cumsum_count = {0: 1}  # cumsum -> frequency
+    
+    for num in nums:
+        cumsum += num
+        
+        # If (cumsum - k) exists, we found subarrays ending at current position
+        if (cumsum - k) in cumsum_count:
+            count += cumsum_count[cumsum - k]
+        
+        # Add current cumsum to map
+        cumsum_count[cumsum] = cumsum_count.get(cumsum, 0) + 1
+    
+    return count
+
+# Test cases
+if __name__ == "__main__":
+    # Test first_uniq_char
+    assert first_uniq_char("leetcode") == 0
+    assert first_uniq_char("loveleetcode") == 2
+    assert first_uniq_char("aabb") == -1
+    print("✅ first_uniq_char tests passed")
+    
+    # Test is_anagram
+    assert is_anagram("anagram", "nagaram") == True
+    assert is_anagram("rat", "car") == False
+    print("✅ is_anagram tests passed")
+    
+    # Test top_k_frequent
+    result = top_k_frequent([1,1,1,2,2,3], 2)
+    assert set(result) == {1, 2}
+    
+    result2 = top_k_frequent([1], 1)
+    assert result2 == [1]
+    print("✅ top_k_frequent tests passed")
+    
+    # Test intersection
+    assert set(intersection([1,2,2,1], [2,2])) == {2}
+    assert set(intersection([4,9,5], [9,4,9,8,4])) == {4, 9}
+    print("✅ intersection tests passed")
+    
+    # Test subarray_sum
+    assert subarray_sum([1,1,1], 2) == 2
+    assert subarray_sum([1,2,3], 3) == 2  # [3] and [1,2]
+    assert subarray_sum([1], 0) == 0
+    assert subarray_sum([1,-1,0], 0) == 3  # [-1,1], [0], [1,-1,0]
+    print("✅ subarray_sum tests passed")
+    
+    print("All tests passed!")
