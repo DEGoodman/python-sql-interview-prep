@@ -14,25 +14,48 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from database import Database
 
-def run_sql_file(db: Database, sql_file: str, description: str = ""):
-    """Execute a SQL file and handle errors gracefully"""
+def run_sql_file_psql(sql_file: str, description: str = "") -> bool:
+    """
+    Execute a SQL file using psql so that PL/pgSQL dollar-quoted blocks
+    and multi-statement scripts execute correctly.
+    """
     try:
         print(f"📄 {description or f'Running {os.path.basename(sql_file)}'}...", end=" ")
-        
-        # Read and execute SQL file
-        with open(sql_file, 'r') as f:
-            sql_content = f.read()
-        
-        # Split by semicolon and execute each statement
-        statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
-        
-        for statement in statements:
-            if statement and not statement.startswith('--'):
-                db.execute_query(statement)
-        
-        print("✅ Success")
-        return True
-        
+
+        env = os.environ.copy()
+        db_password = env.get('DB_PASSWORD')
+        if db_password:
+            # Allow non-interactive auth if password is provided
+            env['PGPASSWORD'] = db_password
+
+        host = env.get('DB_HOST', 'localhost')
+        port = env.get('DB_PORT', '5432')
+        dbname = env.get('DB_NAME', 'interview_practice')
+        user = env.get('DB_USER')
+
+        cmd = [
+            'psql',
+            '-v', 'ON_ERROR_STOP=1',
+            '-h', host,
+            '-p', str(port),
+            '-d', dbname,
+        ]
+
+        if user:
+            cmd.extend(['-U', user])
+
+        cmd.extend(['-f', sql_file])
+
+        result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+        if result.returncode == 0:
+            print("✅ Success")
+            return True
+        else:
+            # Surface a concise error; keep stderr for details
+            print("❌ Failed")
+            if result.stderr:
+                print(result.stderr.strip())
+            return False
     except Exception as e:
         print(f"❌ Failed: {str(e)}")
         return False
@@ -139,25 +162,23 @@ def main():
     
     # Connect to database and run setup scripts
     print("\n📊 Initializing database schema and data...")
+    # Use psql to run SQL scripts to properly handle PL/pgSQL blocks
+    schema_file = os.path.join('database', 'schema.sql')
+    if not run_sql_file_psql(schema_file, "Setting up database schema"):
+        return 1
+
+    data_file = os.path.join('database', 'sample_data.sql')
+    if not run_sql_file_psql(data_file, "Loading sample data"):
+        return 1
+
+    # Verify setup using application connection
     db = Database()
-    
     if not db.connect():
         print("❌ Could not connect to database")
         print("🔍 Check your .env file and ensure PostgreSQL is running")
         return 1
-    
+
     try:
-        # Run schema setup
-        schema_file = os.path.join('database', 'schema.sql')
-        if not run_sql_file(db, schema_file, "Setting up database schema"):
-            return 1
-        
-        # Run sample data
-        data_file = os.path.join('database', 'sample_data.sql')
-        if not run_sql_file(db, data_file, "Loading sample data"):
-            return 1
-        
-        # Verify setup
         print("\n✅ Verifying database setup...")
         tables = ['customers', 'products', 'categories', 'orders', 'order_items']
         all_good = True
@@ -181,7 +202,6 @@ def main():
         else:
             print("\n⚠️  Setup completed with some issues")
             return 1
-            
     finally:
         db.close()
 

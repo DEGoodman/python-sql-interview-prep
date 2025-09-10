@@ -6,22 +6,38 @@ Perfect for 1-hour technical interviews on platforms like CoderPad that test bas
 
 ## 🚀 Quick Start
 
+
+### note: using pyenv-virtualenv (recommended with pyenv)
 ```bash
-# 1. Set up environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 1) Select your local Python version (example)
+pyenv local 3.11.9
+
+# 2) Create and activate a virtualenv for this project
+pyenv virtualenv 3.11.9 interview-practice-311
+
+# Optional: auto-activate this env when you cd into the repo
+pyenv local interview-practice-311
+
+# Or activate manually for this shell
+pyenv activate interview-practice-311
+
+# 3) Install dependencies
+python -m pip install -U pip setuptools wheel
 pip install -r requirements.txt
 
-# 2. Set up database
+# 4) Set up database
 createdb interview_practice
 cp .env.example .env  # Edit with your DB credentials
 
-# 3. Initialize practice database
+# 5) Initialize practice database
 python scripts/setup_db.py
 
-# 4. Start practicing!
+# 6) Start practicing!
 # Begin with exercises/STUDY_PLAN.md
 ```
+
+To deactivate later: `pyenv deactivate`.
+
 
 ## 📚 What's Included
 

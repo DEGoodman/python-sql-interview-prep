@@ -143,7 +143,7 @@ INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price
 (14, 19, 1, 19.99, 19.99),  -- Throw Pillow
 
 -- Order 15: Emily Brown (repeat)
-(15, 5, 1, 79.99, 79.99),   -- Bluetooth Speaker
+(15, 5, 1, 79.99, 79.99);   -- Bluetooth Speaker
 
 -- Update some product stock quantities to reflect sales
 UPDATE products SET last_updated = CURRENT_TIMESTAMP;
