@@ -34,6 +34,13 @@ python scripts/setup_db.py
 
 # 6) Start practicing!
 # Begin with exercises/STUDY_PLAN.md
+
+# 7) Running Tests
+# Use pytest for better debugging and test organization:
+pytest tests/                           # Run all tests
+pytest tests/test_hash_maps_and_sets.py # Run specific test file
+pytest tests/ --pdb                     # Drop into debugger on failures
+pytest tests/ -v                        # Verbose output
 ```
 
 To deactivate later: `pyenv deactivate`.
@@ -43,8 +50,9 @@ To deactivate later: `pyenv deactivate`.
 
 ### 🧠 **Data Structures Practice** (`exercises/data_structures/`)
 - **Arrays & Lists**: Two Sum, Missing Number, Anagram grouping
-- **Hash Maps & Sets**: Frequency counting, intersections, subarray problems  
+- **Hash Maps & Sets**: Frequency counting, intersections, subarray problems
 - **Timing**: 5-15 minutes per problem (interview-paced)
+- **Testing**: Use `pytest tests/test_*.py --pdb` for debugging
 
 ### 🗃️ **SQL Practice** (`exercises/sql/`)
 - **Basic Queries**: JOINs, filtering, aggregations
@@ -66,9 +74,14 @@ To deactivate later: `pyenv deactivate`.
 ```
 exercises/                  # 🎯 Your main practice area
 ├── STUDY_PLAN.md          # Complete 3-week prep guide
-├── data_structures/       # Python coding challenges  
+├── data_structures/       # Python coding challenges
 ├── sql/                   # SQL query practice
 └── combined/              # Real-world scenarios
+
+tests/                    # 🧪 Pytest test files
+├── test_arrays_and_lists.py
+├── test_hash_maps_and_sets.py
+└── (test files for other exercises)
 
 database/                  # 🗃️ Sample database setup
 ├── schema.sql            # E-commerce database structure

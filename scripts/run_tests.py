@@ -13,8 +13,10 @@ from test_runner import TestRunner
 
 def main():
     runner = TestRunner()
-    
+
     print("🎯 Python PostgreSQL Interview Practice - Test Runner")
+    print("=" * 60)
+    print("💡 For better debugging, use: pytest tests/ --pdb")
     print("=" * 60)
     
     if len(sys.argv) > 1:
@@ -41,6 +43,7 @@ def main():
         runner.run_exercise_suite('exercises')
     
     print("\n📖 For detailed study plan, see: exercises/STUDY_PLAN.md")
+    print("🧪 For pytest debugging: pytest tests/test_*.py --pdb")
 
 if __name__ == "__main__":
     main()

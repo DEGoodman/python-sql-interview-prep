@@ -15,8 +15,8 @@
 - Focus on: Time/space complexity, common patterns
 
 **Day 3-4: SQL Basics**
-- Set up database: `psql -d interview_practice -f sql_queries/schema.sql`
-- Load data: `psql -d interview_practice -f sql_queries/sample_data.sql`
+- Set up database: `python scripts/setup_db.py` (or manually: `psql -d interview_practice -f database/schema.sql`)
+- Load data: Database setup script handles this automatically
 - Practice `exercises/sql/basic_queries.sql` (60 mins)
 
 **Day 5-7: Combined Practice**
