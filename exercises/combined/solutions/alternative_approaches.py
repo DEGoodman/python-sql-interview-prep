@@ -12,6 +12,32 @@ class CustomerAnalyticsAlternatives:
     def __init__(self, db: Database):
         self.db = db
 
+    def top_customers_with_cos(self, limit: int = 10) -> List[Dict[str, Any]]:
+        """Alternative: simpler query based on customer_order_summary table"""
+
+        query = """
+            SELECT
+              customer_name,
+              total_spent,
+              order_count
+            FROM customer_order_summary
+            ORDER BY total_spent DESC
+            LIMIT %s
+        """
+
+        rows = self.db.execute_query(query, (limit,))
+
+        if rows:
+            return [
+                {
+                    'customer_name': row[0],
+                    'total_spent': float(row[1]),
+                    'order_count': row[2]
+                }
+                for row in rows
+            ]
+        return []
+
     def retention_rate_with_exists(self, months_back: int = 6) -> float:
         """Alternative: Using EXISTS instead of JOIN for intersection."""
         query = """

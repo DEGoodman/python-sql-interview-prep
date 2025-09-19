@@ -110,6 +110,67 @@ def subarray_sum(nums, k):
     
     return count
 
+def generate_sales_report():
+    """
+    Generate a sales report for products grouped by date.
+    Products with no orders show 0 revenue.
+
+    Time: O(p*d + o), Space: O(p*d)
+    where p = products, d = dates, o = orders
+    """
+    # Hardcoded data
+    products = [
+        {"id": 1, "name": "Laptop", "price": 999.99},
+        {"id": 2, "name": "Mouse", "price": 25.50},
+        {"id": 3, "name": "Keyboard", "price": 75.00},
+        {"id": 4, "name": "Monitor", "price": 299.99},
+        {"id": 5, "name": "Webcam", "price": 89.99}
+    ]
+
+    orders = [
+        {"id": 1, "product_id": 1, "date": "2024-01-15"},
+        {"id": 2, "product_id": 1, "date": "2024-01-16"},
+        {"id": 3, "product_id": 2, "date": "2024-01-15"},
+        {"id": 4, "product_id": 2, "date": "2024-01-16"},
+        {"id": 5, "product_id": 2, "date": "2024-01-17"},
+        {"id": 6, "product_id": 3, "date": "2024-01-15"},
+        {"id": 7, "product_id": 1, "date": "2024-01-17"}
+        # Note: No orders for Monitor (id=4) or Webcam (id=5)
+    ]
+
+    # Group orders by date and product using hash map
+    sales_by_date_product = {}
+
+    for order in orders:
+        date = order["date"]
+        product_id = order["product_id"]
+
+        if date not in sales_by_date_product:
+            sales_by_date_product[date] = {}
+
+        if product_id not in sales_by_date_product[date]:
+            sales_by_date_product[date][product_id] = 0
+
+        # Find product price and add to revenue
+        product_price = next(p["price"] for p in products if p["id"] == product_id)
+        sales_by_date_product[date][product_id] += product_price
+
+    # Generate report ensuring all products appear for each date
+    report = []
+    all_dates = sorted(set(order["date"] for order in orders))
+
+    for date in all_dates:
+        for product in products:
+            revenue = sales_by_date_product.get(date, {}).get(product["id"], 0)
+            report.append({
+                "date": date,
+                "product_name": product["name"],
+                "product_id": product["id"],
+                "total_revenue": revenue
+            })
+
+    return sorted(report, key=lambda x: (x["date"], x["product_name"]))
+
 # Test cases
 if __name__ == "__main__":
     # Test first_uniq_char
@@ -142,5 +203,22 @@ if __name__ == "__main__":
     assert subarray_sum([1], 0) == 0
     assert subarray_sum([1,-1,0], 0) == 3  # [-1,1], [0], [1,-1,0]
     print("✅ subarray_sum tests passed")
-    
+
+    # Test generate_sales_report
+    sales_report = generate_sales_report()
+
+    # Verify structure
+    assert len(sales_report) > 0
+    assert all('date' in item and 'product_name' in item and 'total_revenue' in item for item in sales_report)
+
+    # Verify products with 0 sales are included
+    zero_revenue_items = [item for item in sales_report if item['total_revenue'] == 0]
+    assert len(zero_revenue_items) > 0  # Monitor and Webcam should have 0 revenue
+
+    # Verify some actual sales
+    nonzero_revenue_items = [item for item in sales_report if item['total_revenue'] > 0]
+    assert len(nonzero_revenue_items) > 0
+
+    print("✅ generate_sales_report tests passed")
+
     print("All tests passed!")

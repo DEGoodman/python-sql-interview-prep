@@ -48,8 +48,33 @@ def intersection(nums1, nums2):
 def subarray_sum(nums, k):
     """
     Count the number of continuous subarrays whose sum equals k.
-    
+
     Example: nums = [1,1,1], k = 2 -> 2
+    """
+    # TODO: Implement this function
+    pass
+
+# Exercise 6: Sales Report Generator (Medium - 12 minutes)
+def generate_sales_report():
+    """
+    Given two classes of data - Products (id, name, price) and Orders (id, product_id, date),
+    create a "sales report" for each product grouped by date.
+    Products that have no orders should have 0 as their total revenue.
+
+    Use hardcoded data and return a list of dictionaries with:
+    - date: order date
+    - product_name: name of the product
+    - product_id: id of the product
+    - total_revenue: total revenue for that product on that date (0 if no sales)
+
+    Example output:
+    [
+        {"date": "2024-01-15", "product_name": "Laptop", "product_id": 1, "total_revenue": 999.99},
+        {"date": "2024-01-15", "product_name": "Mouse", "product_id": 2, "total_revenue": 25.50},
+        {"date": "2024-01-15", "product_name": "Keyboard", "product_id": 3, "total_revenue": 75.00},
+        {"date": "2024-01-15", "product_name": "Monitor", "product_id": 4, "total_revenue": 0},
+        ...
+    ]
     """
     # TODO: Implement this function
     pass
@@ -76,5 +101,10 @@ if __name__ == "__main__":
     # Test subarray_sum
     assert subarray_sum([1,1,1], 2) == 2
     assert subarray_sum([1,2,3], 3) == 2
-    
+
+    # Test generate_sales_report
+    sales_report = generate_sales_report()
+    assert len(sales_report) > 0
+    assert all('date' in item and 'product_name' in item and 'total_revenue' in item for item in sales_report)
+
     print("All tests passed!")
